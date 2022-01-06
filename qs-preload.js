@@ -83,23 +83,41 @@ window.preload = function(icon, manifest){
         }
       };
       for(var i = 0; i < manifest.length; i++){
-          var script = document.createElement('script');
-
-          script.onload = load;
-          script.src = manifest[i];
-          document.body.append(script);
+          if(manifest[i].includes('.js')){
+              addScript(manifest[i], load);
+          }
+          else if(manifest[i].includes('.css')){
+              addStyle(manifest[i], load);
+          }
       }
   }
 
-  var iconDom = createImg(icon);
-  iconDom.onload = function(){
+    var addScript = function(js, load){
+        var script = document.createElement('script');
+
+        script.onload = load;
+        script.src = js;
+        document.body.append(script);
+    }
+
+    var addStyle = function(css, load){
+        var link = document.createElement('link');
+        link.setAttribute("rel", "stylesheet");
+        link.setAttribute("type", "text/css");
+        link.onload = load;
+        link.href = css;
+        document.head.append(link);
+    }
+
+    var iconDom = createImg(icon);
+    iconDom.onload = function(){
       loadManifest(manifest);
-  }
+    }
 
-  imgWrap.append(iconDom);
-  imgWrap.append(iconMask);
+    imgWrap.append(iconDom);
+    imgWrap.append(iconMask);
 
-  mask.append(imgWrap);
+    mask.append(imgWrap);
 
-  document.body.append(mask);
+    document.body.append(mask);
 }
