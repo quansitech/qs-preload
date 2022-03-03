@@ -23,6 +23,7 @@ window.preload = function(icon, manifest){
         var img = document.createElement('img');
         img.src = src;
         img.style.maxWidth = '150px';
+        img.style.opacity = '0';
         return img;
     }
   
@@ -58,18 +59,24 @@ window.preload = function(icon, manifest){
     var animation = function(){};
     var startAnimate = false;
 
+    var iconDom = createImg(icon);
+
     var timeoutId = setTimeout(function(){
         startAnimate = true;
         mask.style.transition = 'opacity .5s linear .9s';
 
-        var iconDom = createImg(icon);
+        var totalHeight = 0;
+        iconDom.style.opacity = '1';
 
-        imgWrap.append(iconDom);
         imgWrap.append(iconMask);
-
-        mask.append(imgWrap);
-        var totalHeight = parseInt(window.getComputedStyle(iconMask, null).getPropertyValue("height"));
+        
         animation = function(){
+            //图标未出现，不进行动画处理
+            if(totalHeight === 0){
+                totalHeight = iconDom.getBoundingClientRect().height;
+                return;
+            }
+
             if(sum === manifest.length){
                 height = totalHeight;
             }
@@ -138,7 +145,9 @@ window.preload = function(icon, manifest){
       document.head.append(link);
     }
 
-    loadManifest(manifest);
-  
+    imgWrap.append(iconDom);
+    mask.append(imgWrap);
     document.body.append(mask);
+
+    loadManifest(manifest);
   }
