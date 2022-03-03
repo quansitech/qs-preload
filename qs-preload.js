@@ -145,9 +145,11 @@ window.preload = function(icon, manifest){
       document.head.append(link);
     }
 
+    iconDom.onload = function(){
+        loadManifest(manifest);
+    }
+
     imgWrap.append(iconDom);
     mask.append(imgWrap);
     document.body.append(mask);
-
-    loadManifest(manifest);
   }
