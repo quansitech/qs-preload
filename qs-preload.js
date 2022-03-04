@@ -56,24 +56,21 @@ window.preload = function(icon, manifest){
     });
 
     var sum = 0;
-    var animation = function(){};
-    var startAnimate = false;
+    var animation;
 
     var iconDom = createImg(icon);
 
     var timeoutId = setTimeout(function(){
-        startAnimate = true;
+        
         mask.style.transition = 'opacity .5s linear .9s';
 
         var totalHeight = 0;
         iconDom.style.opacity = '1';
 
         imgWrap.append(iconMask);
-        
         animation = function(){
             //图标未出现，不进行动画处理
-            if(totalHeight === 0){
-                totalHeight = iconDom.getBoundingClientRect().height;
+            if(!(totalHeight = iconDom.getBoundingClientRect().height)){
                 return;
             }
 
@@ -84,6 +81,7 @@ window.preload = function(icon, manifest){
                 height = parseInt(sum / manifest.length * totalHeight);
             }
             iconMask.style.height = (totalHeight - height) + 'px';
+
             if(sum === manifest.length){
                 mask.style.opacity = 0;
                 mask.addEventListener('transitionend', function(e){
@@ -105,14 +103,17 @@ window.preload = function(icon, manifest){
           if(sum === manifest.length){
               finished = true;
               clearTimeout(timeoutId);
-              animation();
-              if(!startAnimate){
+              
+              if(typeof animation === 'function'){
+                animation();
+              }
+              else{
                 mask.remove();
               }
               
           }
           else{
-            animation();
+            typeof animation === 'function' && animation();
           }
         };
   
